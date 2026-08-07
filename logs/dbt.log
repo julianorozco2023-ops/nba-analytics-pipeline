@@ -1,0 +1,147 @@
+[0m14:00:15.562910 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10cc6cec0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e173610>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e173d90>]}
+
+
+============================== 14:00:15.564983 | 60913010-9567-452c-925a-a345ee3ad964 ==============================
+[0m14:00:15.564983 [info ] [MainThread]: Running with dbt=1.12.0
+[0m14:00:15.565190 [debug] [MainThread]: running dbt with arguments {'quiet': 'False', 'printer_width': '80', 'target_path': 'None', 'maximum_seed_size_mib': '1', 'send_anonymous_usage_stats': 'True', 'write_json': 'True', 'invocation_command': 'dbt init nba_transforms', 'fail_fast': 'False', 'log_cache_events': 'False', 'empty': 'None', 'indirect_selection': 'eager', 'profiles_dir': '/Users/julianorozco/.dbt', 'use_colors': 'True', 'introspect': 'True', 'version_check': 'True', 'use_experimental_parser': 'False', 'cache_selected_only': 'False', 'log_path': 'logs', 'debug': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'warn_error': 'None', 'hints_enabled': 'True', 'static_parser': 'True', 'no_print': 'None', 'partial_parse': 'True', 'log_format': 'default'}
+[0m14:00:15.571888 [info ] [MainThread]: Creating dbt configuration folder at /Users/julianorozco/.dbt
+[0m14:00:15.572605 [debug] [MainThread]: Starter project path: /Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/include/starter_project
+[0m14:00:15.575117 [info ] [MainThread]: Setting up your profile.
+[0m14:10:18.376499 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+dlopen(/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))
+[0m14:10:18.383554 [error] [MainThread]: Traceback (most recent call last):
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/cli/requires.py", line 190, in wrapper
+    result, success = func(*args, **kwargs)
+                      ~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/cli/requires.py", line 136, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/cli/main.py", line 503, in init
+    results = task.run()
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/task/init.py", line 360, in run
+    self.setup_profile(profile_name)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/task/init.py", line 264, in setup_profile
+    self.create_profile_from_target(adapter, profile_name=profile_name)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/task/init.py", line 174, in create_profile_from_target
+    load_plugin(adapter)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/adapters/factory.py", line 239, in load_plugin
+    return FACTORY.load_plugin(name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/adapters/factory.py", line 68, in load_plugin
+    mod: Any = import_module("." + name, "dbt.adapters")
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1022, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/adapters/postgres/__init__.py", line 4, in <module>
+    from dbt.adapters.postgres.connections import PostgresConnectionManager, PostgresCredentials
+  File "/Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/adapters/postgres/connections.py", line 15, in <module>
+    import psycopg2
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/__init__.py", line 51, in <module>
+    from psycopg2._psycopg import (                     # noqa
+    ...<10 lines>...
+    )
+ImportError: dlopen(/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/psycopg2/_psycopg.cpython-313-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))
+
+[0m14:10:18.387248 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": false, "command_wall_clock_time": 602.8278, "process_in_blocks": "0", "process_kernel_time": 0.122279, "process_mem_max_rss": "125337600", "process_out_blocks": "0", "process_user_time": 0.562583}
+[0m14:10:18.387701 [debug] [MainThread]: Command `dbt init` failed at 14:10:18.387610 after 602.83 seconds
+[0m14:10:18.388231 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e2ac640>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e2569f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e2b0380>]}
+[0m14:10:18.388712 [debug] [MainThread]: Flushing usage events
+[0m14:10:18.973418 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:08:09.802657 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108560ec0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109a67610>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109a67d90>]}
+
+
+============================== 18:08:09.804812 | 32ed9dbe-a8f8-4b98-9b29-1a114fbad5d0 ==============================
+[0m18:08:09.804812 [info ] [MainThread]: Running with dbt=1.12.0
+[0m18:08:09.805019 [debug] [MainThread]: running dbt with arguments {'no_print': 'None', 'write_json': 'True', 'static_parser': 'True', 'partial_parse': 'True', 'log_format': 'default', 'use_experimental_parser': 'False', 'hints_enabled': 'True', 'debug': 'False', 'introspect': 'True', 'profiles_dir': '/Users/julianorozco/.dbt', 'version_check': 'True', 'maximum_seed_size_mib': '1', 'printer_width': '80', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'use_colors': 'True', 'send_anonymous_usage_stats': 'True', 'warn_error': 'None', 'empty': 'None', 'quiet': 'False', 'indirect_selection': 'eager', 'cache_selected_only': 'False', 'log_cache_events': 'False', 'invocation_command': 'dbt init nba_transforms', 'fail_fast': 'False', 'log_path': 'logs'}
+[0m18:08:09.811991 [info ] [MainThread]: A project called nba_transforms already exists here.
+[0m18:08:09.813369 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.043548375, "process_in_blocks": "0", "process_kernel_time": 0.109509, "process_mem_max_rss": "125190144", "process_out_blocks": "0", "process_user_time": 0.4673}
+[0m18:08:09.813546 [debug] [MainThread]: Command `dbt init` succeeded at 18:08:09.813506 after 0.04 seconds
+[0m18:08:09.813652 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109a86c40>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109ab56d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109abd480>]}
+[0m18:08:09.813756 [debug] [MainThread]: Flushing usage events
+[0m18:08:10.235067 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:08:42.502039 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108454ec0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1099574d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109957750>]}
+
+
+============================== 18:08:42.504155 | 4e869d75-d31e-44a2-8bc5-84cae0c479dc ==============================
+[0m18:08:42.504155 [info ] [MainThread]: Running with dbt=1.12.0
+[0m18:08:42.504398 [debug] [MainThread]: running dbt with arguments {'cache_selected_only': 'False', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'invocation_command': 'dbt init nba_transforms', 'version_check': 'True', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'no_print': 'None', 'introspect': 'True', 'write_json': 'True', 'log_format': 'default', 'warn_error': 'None', 'maximum_seed_size_mib': '1', 'profiles_dir': '/Users/julianorozco/.dbt', 'target_path': 'None', 'empty': 'None', 'static_parser': 'True', 'use_colors': 'True', 'printer_width': '80', 'debug': 'False', 'use_experimental_parser': 'False', 'fail_fast': 'False', 'log_path': 'logs', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'hints_enabled': 'True', 'quiet': 'False'}
+[0m18:08:42.511812 [debug] [MainThread]: Starter project path: /Users/julianorozco/Library/Python/3.13/lib/python/site-packages/dbt/include/starter_project
+[0m18:08:42.514605 [info ] [MainThread]: Setting up your profile.
+[0m18:13:55.038079 [info ] [MainThread]: Profile nba_transforms written to /Users/julianorozco/.dbt/profiles.yml using target's profile_template.yml and your supplied values.
+[0m18:13:55.045303 [info ] [MainThread]: Running dbt debug to validate the project...
+[0m18:13:55.046600 [info ] [MainThread]: dbt version: 1.12.0
+[0m18:13:55.046879 [info ] [MainThread]: python version: 3.13.0
+[0m18:13:55.047081 [info ] [MainThread]: python path: /Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13
+[0m18:13:55.047293 [info ] [MainThread]: os info: macOS-26.4-arm64-arm-64bit-Mach-O
+[0m18:13:55.068556 [info ] [MainThread]: Using profiles dir at /Users/julianorozco/.dbt
+[0m18:13:55.068805 [info ] [MainThread]: Using profiles.yml file at /Users/julianorozco/.dbt/profiles.yml
+[0m18:13:55.068926 [info ] [MainThread]: Using dbt_project.yml file at /Users/julianorozco/PycharmProjects/NBA/nba_transforms/dbt_project.yml
+[0m18:13:55.069812 [info ] [MainThread]: adapter type: postgres
+[0m18:13:55.069941 [info ] [MainThread]: adapter version: 1.11.0
+[0m18:13:55.109031 [info ] [MainThread]: Configuration:
+[0m18:13:55.109199 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m18:13:55.109281 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m18:13:55.109350 [info ] [MainThread]: Required dependencies:
+[0m18:13:55.109490 [debug] [MainThread]: Executing "git --help"
+[0m18:13:55.118289 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone      Clone a repository into a new directory\n   init       Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add        Add file contents to the index\n   mv         Move or rename a file, a directory, or a symlink\n   restore    Restore working tree files\n   rm         Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect     Use binary search to find the commit that introduced a bug\n   diff       Show changes between commits, commit and working tree, etc\n   grep       Print lines matching a pattern\n   log        Show commit logs\n   show       Show various types of objects\n   status     Show the working tree status\n\ngrow, mark and tweak your common history\n   backfill   Download missing objects in a partial clone\n   branch     List, create, or delete branches\n   commit     Record changes to the repository\n   history    EXPERIMENTAL: Rewrite history\n   merge      Join two or more development histories together\n   rebase     Reapply commits on top of another base tip\n   reset      Set `HEAD` or the index to a known state\n   switch     Switch branches\n   tag        Create, list, delete or verify tags\n\ncollaborate (see also: git help workflows)\n   fetch      Download objects and refs from another repository\n   pull       Fetch from and integrate with another repository or a local branch\n   push       Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m18:13:55.118661 [debug] [MainThread]: STDERR: "b''"
+[0m18:13:55.118776 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m18:13:55.118874 [info ] [MainThread]: Connection:
+[0m18:13:55.118982 [info ] [MainThread]:   host: localhost
+[0m18:13:55.119061 [info ] [MainThread]:   port: 5432
+[0m18:13:55.119132 [info ] [MainThread]:   user: julianorozco
+[0m18:13:55.119206 [info ] [MainThread]:   database: nba_pipeline
+[0m18:13:55.119283 [info ] [MainThread]:   schema: public
+[0m18:13:55.119356 [info ] [MainThread]:   connect_timeout: 10
+[0m18:13:55.119425 [info ] [MainThread]:   role: None
+[0m18:13:55.119496 [info ] [MainThread]:   search_path: None
+[0m18:13:55.119567 [info ] [MainThread]:   keepalives_idle: 0
+[0m18:13:55.119633 [info ] [MainThread]:   sslmode: None
+[0m18:13:55.119696 [info ] [MainThread]:   sslcert: None
+[0m18:13:55.119761 [info ] [MainThread]:   sslkey: None
+[0m18:13:55.119823 [info ] [MainThread]:   sslrootcert: None
+[0m18:13:55.119889 [info ] [MainThread]:   application_name: dbt
+[0m18:13:55.119954 [info ] [MainThread]:   autocommit: False
+[0m18:13:55.120019 [info ] [MainThread]:   retries: 1
+[0m18:13:55.120303 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m18:13:55.154992 [debug] [MainThread]: Acquiring new postgres connection 'debug'
+[0m18:13:55.204941 [debug] [MainThread]: Using postgres connection "debug"
+[0m18:13:55.205091 [debug] [MainThread]: On debug: select 1 as id
+[0m18:13:55.205169 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m18:13:55.237309 [debug] [MainThread]: SQL status: SELECT 1 in 0.032 seconds
+[0m18:13:55.237714 [debug] [MainThread]: On debug: Close
+[0m18:13:55.237819 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m18:13:55.237919 [info ] [MainThread]: [32mAll checks passed![0m
+[0m18:13:55.238048 [info ] [MainThread]: Your new dbt project "nba_transforms" was created!
+Initialized new project in /Users/julianorozco/PycharmProjects/NBA/nba_transforms/nba_transforms
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m18:13:55.239487 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 312.7767, "process_in_blocks": "0", "process_kernel_time": 0.169597, "process_mem_max_rss": "139493376", "process_out_blocks": "0", "process_user_time": 0.594418}
+[0m18:13:55.239637 [debug] [MainThread]: Command `dbt init` succeeded at 18:13:55.239603 after 312.78 seconds
+[0m18:13:55.239723 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m18:13:55.239822 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109b7ba80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1099a96d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109eee250>]}
+[0m18:13:55.239938 [debug] [MainThread]: Flushing usage events
+[0m18:13:55.565319 [debug] [MainThread]: An error was encountered while trying to flush usage events
