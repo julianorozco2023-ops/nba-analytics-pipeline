@@ -64,8 +64,7 @@ NBA/
 │       ├── top_scorers.sql
 │       ├── team_records.sql
 │       └── team_game_logs.sql
-└── ~/airflow/dags/
-    └── nba_dag.py       # Airflow DAG definition
+└── nba_dag.py       # Airflow DAG definition
 ```
 
 ---
