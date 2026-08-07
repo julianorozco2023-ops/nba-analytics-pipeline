@@ -2,3 +2,5 @@ data/raw/*.csv
 __pycache__/
 *.pyc
 .env
+.idea/
+logs/
