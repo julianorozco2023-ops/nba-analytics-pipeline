@@ -1,6 +1,6 @@
 # NBA Analytics Pipeline
 
-An end-to-end data engineering project that extracts live NBA stats, loads them into PostgreSQL, transforms them with dbt, orchestrates the pipeline with Airflow, and serves the results through a Streamlit dashboard.
+An end-to-end project that extracts live NBA stats, loads them into PostgreSQL, transforms them with dbt, orchestrates the pipeline with Airflow, and serves the results through a Streamlit dashboard.
 
 ---
 
