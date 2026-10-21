@@ -1,11 +1,10 @@
-#This tells dbt that your source tables live in the nba_pipeline database under the public schema
+#This tells dbt that your source tables live in the public schema of the database set in profiles.yml
 #This is what makes the {{source('public', 'player_stats')}} references in your SQL files work
 
 version: 2
 
 sources:
   - name: public
-    database: nba_pipeline
     schema: public
     tables:
       - name: player_stats

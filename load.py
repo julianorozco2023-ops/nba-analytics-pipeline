@@ -25,4 +25,4 @@ player_stats.to_sql("player_stats", engine, if_exists="replace", index=False)
 standings.to_sql("standings", engine, if_exists="replace", index=False)
 game_logs.to_sql("game_logs", engine, if_exists="replace", index=False)
 
-print("Done! All 3 tables loaded into nba_pipeline.")
+print(f"Done! All 3 tables loaded into {engine.url.database}.")
