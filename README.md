@@ -39,12 +39,12 @@ Airflow (schedules all of the above daily)
 
 ## What It Does
 
-- Pulls current season player stats, team standings, and full game logs for all 30 teams from the NBA API
+- Pulls 2023-24 season player stats, team standings, and full game logs for all 30 teams from the NBA API
 - Loads the raw data into a PostgreSQL database
 - Uses dbt to transform the raw tables into three clean, analysis-ready views:
   - `top_scorers` — top 25 players ranked by points per game
   - `team_records` — all 30 teams ranked by win percentage
-  - `team_game_logs` — every game played this season by every team
+  - `team_game_logs` — every game played that season by every team
 - Serves the views in an interactive Streamlit dashboard
 - Runs the full pipeline automatically every day via an Airflow DAG
 
@@ -53,18 +53,22 @@ Airflow (schedules all of the above daily)
 ## Project Structure
 
 ```
-NBA/
-├── main.py              # Phase 1: Extract data from NBA API → CSVs
-├── load.py              # Phase 2: Load CSVs into PostgreSQL
-├── dashboard.py         # Phase 4: Streamlit dashboard
-├── data/raw/            # Raw CSV files (gitignored)
-├── nba_transforms/      # dbt project
-│   └── models/nba/
-│       ├── sources.yml
-│       ├── top_scorers.sql
-│       ├── team_records.sql
-│       └── team_game_logs.sql
-└── nba_dag.py       # Airflow DAG definition
+nba-analytics-pipeline/
+├── main.py              # Extract: NBA API → CSVs in data/raw/
+├── load.py              # Load: CSVs → PostgreSQL raw tables
+├── db.py                # Shared database connection (reads settings from .env)
+├── dashboard.py         # Streamlit dashboard
+├── nba_dag.py           # Airflow DAG that runs extract → load → dbt daily
+├── requirements.txt     # Pinned Python dependencies
+├── .env.example         # Template for your database settings
+├── data/raw/            # Raw CSV files (created on first run, gitignored)
+└── nba_transforms/      # dbt project
+    ├── profiles.yml     # dbt connection (reads the same settings from the environment)
+    └── models/nba/
+        ├── sources.yml
+        ├── top_scorers.sql
+        ├── team_records.sql
+        └── team_game_logs.sql
 ```
 
 ---
@@ -73,44 +77,78 @@ NBA/
 
 ### Prerequisites
 - Python 3.13
-- PostgreSQL 15
-- dbt-postgres
-- Apache Airflow
+- PostgreSQL 15 or newer, running locally
 
 ### Setup
 
-1. Install dependencies:
+1. Clone the repo and create a virtual environment:
 ```bash
-pip3 install nba_api pandas psycopg2 sqlalchemy dbt-postgres apache-airflow streamlit
+git clone https://github.com/julianorozco2023-ops/nba-analytics-pipeline.git
+cd nba-analytics-pipeline
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-2. Create the database:
+2. Install dependencies:
 ```bash
-psql postgres -c "CREATE DATABASE nba_pipeline;"
+pip install -r requirements.txt
 ```
 
-3. Extract data:
+3. Configure your database connection. Copy the template, then edit `.env` with your Postgres username (and password, if your setup uses one):
 ```bash
-python3 main.py
+cp .env.example .env
 ```
 
-4. Load into PostgreSQL:
+4. Create the database:
 ```bash
-python3 load.py
+createdb nba_pipeline
 ```
 
-5. Run dbt transformations:
+### Run the pipeline
+
+Run every command from the project root.
+
+1. Extract data from the NBA API (takes about a minute; it pauses between requests to respect rate limits):
 ```bash
-dbt run --project-dir nba_transforms
+python main.py
 ```
 
-6. Launch the dashboard:
+2. Load into PostgreSQL:
+```bash
+python load.py
+```
+
+3. Run dbt transformations. dbt doesn't read `.env` on its own, so export the variables into your shell first:
+```bash
+set -a && source .env && set +a
+dbt run --project-dir nba_transforms --profiles-dir nba_transforms
+```
+
+4. Launch the dashboard:
 ```bash
 streamlit run dashboard.py
 ```
 
-7. Start Airflow (optional, for automated scheduling):
+### Scheduling with Airflow (optional)
+
+Airflow is installed separately with its official constraints file, which pins compatible versions of its many dependencies. Install it into the same virtual environment so the DAG's tasks can use the pipeline's packages:
+```bash
+pip install "apache-airflow==3.3.0" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-3.3.0/constraints-3.13.txt"
+```
+
+Link the DAG into Airflow's DAG folder. Use a symlink rather than a copy, because the DAG locates the project by following the link back to this folder:
+```bash
+mkdir -p ~/airflow/dags
+ln -s "$(pwd)/nba_dag.py" ~/airflow/dags/nba_dag.py
+```
+
+Start Airflow:
 ```bash
 airflow standalone
 ```
-Then open `http://localhost:8080`, find the `nba_pipeline` DAG and enable it.
+Then open `http://localhost:8080`, sign in with the credentials printed in the terminal, find the `nba_pipeline` DAG and enable it.
+
+### Troubleshooting
+
+- **`main.py` fails with `JSONDecodeError`:** stats.nba.com sometimes returns a web page instead of data, usually when it blocks automated requests. This comes from the NBA's side, not the pipeline. Wait and retry, or try from a different network. The rest of the pipeline can still run on CSVs you've already extracted.
+- **dbt fails with `role "postgres" does not exist` (or another connection error) while `load.py` works:** dbt isn't seeing your `.env` settings. Run the `set -a && source .env && set +a` line in the same terminal before `dbt run`.

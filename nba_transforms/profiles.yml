@@ -1,0 +1,16 @@
+# Connection settings come from the standard PostgreSQL environment variables
+# (PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE), so no credentials live in the repo.
+# The second argument to env_var() is the default used when the variable isn't set.
+
+nba_transforms:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      port: "{{ env_var('PGPORT', '5432') | as_number }}"
+      user: "{{ env_var('PGUSER', 'postgres') }}"
+      pass: "{{ env_var('PGPASSWORD', '') }}"
+      dbname: "{{ env_var('PGDATABASE', 'nba_pipeline') }}"
+      schema: public
+      threads: 1
