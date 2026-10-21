@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-engine = create_engine("postgresql+psycopg2://localhost/nba_pipeline")
+engine = get_engine()
 
 # Drop views before replacing raw tables — PostgreSQL won't drop a table with dependent views
 with engine.connect() as conn:
