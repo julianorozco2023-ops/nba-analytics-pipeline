@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent() / "data" / "raw"
+DATA_DIR.mkdir(parents = True, exist_ok = True)
 
 all_teams = teams.get_teams()
 
