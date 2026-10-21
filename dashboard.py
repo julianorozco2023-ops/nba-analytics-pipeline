@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
 
-engine = create_engine("postgresql+psycopg2://localhost/nba_pipeline")
+engine = get_engine()
 
 st.title("NBA Analytics Dashboard")
 
