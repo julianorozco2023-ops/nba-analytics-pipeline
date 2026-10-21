@@ -39,7 +39,7 @@ Airflow (schedules all of the above daily)
 
 ## What It Does
 
-- Pulls 2023-24 season player stats, team standings, and full game logs for all 30 teams from the NBA API
+- Pulls 2023-24 season player stats, team standings, and full game logs for all 30 teams from the NBA API, falling back to a committed snapshot of the same season for any dataset the API can't deliver
 - Loads the raw data into a PostgreSQL database
 - Uses dbt to transform the raw tables into three clean, analysis-ready views:
   - `top_scorers` — top 25 players ranked by points per game
@@ -62,6 +62,7 @@ nba-analytics-pipeline/
 ├── requirements.txt     # Pinned Python dependencies
 ├── .env.example         # Template for your database settings
 ├── data/raw/            # Raw CSV files (created on first run, gitignored)
+├── data/sample/         # Committed 2023-24 snapshot, used when the NBA API is unavailable
 └── nba_transforms/      # dbt project
     ├── profiles.yml     # dbt connection (reads the same settings from the environment)
     └── models/nba/
@@ -112,6 +113,11 @@ Run every command from the project root.
 ```bash
 python main.py
 ```
+The script reports where each dataset came from. If a request times out or returns something other than data, it copies that dataset from `data/sample/` into `data/raw/` instead, so the next steps always have a full season to work with:
+```
+Fetched player_stats from the NBA API.
+Could not fetch game_logs from the NBA API (ReadTimeout). Using sample data from data/sample/game_logs.csv instead.
+```
 
 2. Load into PostgreSQL:
 ```bash
@@ -150,5 +156,5 @@ Then open `http://localhost:8080`, sign in with the credentials printed in the t
 
 ### Troubleshooting
 
-- **`main.py` fails with `JSONDecodeError`:** stats.nba.com sometimes returns a web page instead of data, usually when it blocks automated requests. This comes from the NBA's side, not the pipeline. Wait and retry, or try from a different network. The rest of the pipeline can still run on CSVs you've already extracted.
+- **`main.py` uses sample data instead of live data:** as of October 2026, stats.nba.com hangs on some endpoints (including team game logs and standings) even for requests from a regular browser, and NBA.com no longer calls it from the browser. This comes from the NBA's side, not the pipeline. `main.py` handles it by falling back to `data/sample/`. It also leaves out the `Referer` header that nba_api sends by default, because stats.nba.com now answers requests carrying it with the NBA.com website instead of data.
 - **dbt fails with `role "postgres" does not exist` (or another connection error) while `load.py` works:** dbt isn't seeing your `.env` settings. Run the `set -a && source .env && set +a` line in the same terminal before `dbt run`.
