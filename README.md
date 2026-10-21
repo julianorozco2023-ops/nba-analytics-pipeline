@@ -39,7 +39,7 @@ Airflow (schedules all of the above daily)
 
 ## What It Does
 
-- Pulls 2023-24 season player stats, team standings, and full game logs for all 30 teams from the NBA API, falling back to a committed snapshot of the same season for any dataset the API can't deliver
+- Pulls player stats, team standings, and full game logs for all 30 teams for a configurable season (2023-24 by default) from the NBA API, falling back to a committed 2023-24 snapshot when the API can't deliver all three
 - Loads the raw data into a PostgreSQL database
 - Uses dbt to transform the raw tables into three clean, analysis-ready views:
   - `top_scorers` — top 25 players ranked by points per game
@@ -113,11 +113,12 @@ Run every command from the project root.
 ```bash
 python main.py
 ```
-The script reports where each dataset came from. If a request times out or returns something other than data, it copies that dataset from `data/sample/` into `data/raw/` instead, so the next steps always have a full season to work with:
+The script fetches all three datasets before saving anything. If every request succeeds, it saves the live data to `data/raw/`. If any request times out or returns something other than data, it copies all three files from `data/sample/` instead, so the datasets always come from the same season:
 ```
 Fetched player_stats from the NBA API.
-Could not fetch game_logs from the NBA API (ReadTimeout). Using sample data from data/sample/game_logs.csv instead.
+Could not fetch game_logs from the NBA API (ReadTimeout). Using the 2023-24 sample data in data/sample/ for all datasets so they match.
 ```
+To fetch a different season, change `SEASON` at the top of `main.py` (for example `SEASON = "2025-26"`). The sample data is always 2023-24, so if the API is unavailable the script warns you that it's falling back to a different season than the one you asked for.
 
 2. Load into PostgreSQL:
 ```bash

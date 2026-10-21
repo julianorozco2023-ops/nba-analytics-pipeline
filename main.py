@@ -12,8 +12,10 @@ DATA_DIR = Path(__file__).resolve().parent / "data" / "raw"
 # data/raw/ isn't in the repo (CSVs are gitignored), so create it on first run
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# Committed 2023-24 snapshot, used when the NBA API is unavailable
+# Committed snapshot, used when the NBA API is unavailable
 SAMPLE_DIR = Path(__file__).resolve().parent / "data" / "sample"
+# Season of the CSVs in data/sample/
+SAMPLE_SEASON = "2023-24"
 
 # stats.nba.com now returns its website instead of JSON when a request claims to
 # come from nba.com, so send nba_api's default headers without the Referer.
@@ -22,51 +24,59 @@ HEADERS = {k: v for k, v in NBAStatsHTTP.headers.items() if k != "Referer"}
 # Seconds to wait for each API response before giving up
 TIMEOUT = 30
 
-
-def use_sample(name, error):
-    print(f"Could not fetch {name} from the NBA API ({type(error).__name__}). "
-          f"Using sample data from data/sample/{name}.csv instead.")
-    shutil.copy(SAMPLE_DIR / f"{name}.csv", DATA_DIR / f"{name}.csv")
+# NBA season to fetch, in "YYYY-YY" format
+SEASON = "2023-24"
 
 
-all_teams = teams.get_teams()
-
-try:
+def fetch_player_stats():
     leaders = leagueleaders.LeagueLeaders(
-        season="2023-24",
+        season=SEASON,
         stat_category_abbreviation="PTS",
         per_mode48="PerGame",
         headers=HEADERS,
         timeout=TIMEOUT,
     )
-    df = leaders.get_data_frames()[0]
-    df.to_csv(DATA_DIR / "player_stats.csv", index=False)
-    print("Fetched player_stats from the NBA API.")
-except Exception as e:
-    use_sample("player_stats", e)
+    return leaders.get_data_frames()[0]
 
-time.sleep(0.6)
 
-# If any team fails, use the sample for all game logs rather than saving a partial season
-try:
+def fetch_game_logs():
     all_logs = []
-    for team in all_teams:
-        log = teamgamelog.TeamGameLog(team_id=team["id"], season="2023-24", headers=HEADERS, timeout=TIMEOUT)
+    for team in teams.get_teams():
+        log = teamgamelog.TeamGameLog(team_id=team["id"], season=SEASON, headers=HEADERS, timeout=TIMEOUT)
         df = log.get_data_frames()[0]
         df["TEAM_NAME"] = team["full_name"]
         all_logs.append(df)
         time.sleep(0.6)
+    return pd.concat(all_logs, ignore_index=True)
 
-    combined = pd.concat(all_logs, ignore_index=True)
-    combined.to_csv(DATA_DIR / "game_logs.csv", index=False)
-    print("Fetched game_logs from the NBA API.")
-except Exception as e:
-    use_sample("game_logs", e)
 
+def fetch_standings():
+    standings = leaguestandingsv3.LeagueStandingsV3(season=SEASON, headers=HEADERS, timeout=TIMEOUT)
+    return standings.get_data_frames()[0]
+
+
+DATASETS = {
+    "player_stats": fetch_player_stats,
+    "game_logs": fetch_game_logs,
+    "standings": fetch_standings,
+}
+
+# Fetch everything into memory before saving anything, so data/raw/ always holds
+# one consistent season: either all live data, or all sample data.
 try:
-    standings = leaguestandingsv3.LeagueStandingsV3(season="2023-24", headers=HEADERS, timeout=TIMEOUT)
-    df = standings.get_data_frames()[0]
-    df.to_csv(DATA_DIR / "standings.csv", index=False)
-    print("Fetched standings from the NBA API.")
+    results = {}
+    for name, fetch in DATASETS.items():
+        results[name] = fetch()
+        print(f"Fetched {name} from the NBA API.")
+        time.sleep(0.6)
 except Exception as e:
-    use_sample("standings", e)
+    print(f"Could not fetch {name} from the NBA API ({type(e).__name__}). "
+          f"Using the {SAMPLE_SEASON} sample data in data/sample/ for all datasets so they match.")
+    if SEASON != SAMPLE_SEASON:
+        print(f"Warning: SEASON is set to {SEASON}, but the sample data is from {SAMPLE_SEASON}.")
+    for name in DATASETS:
+        shutil.copy(SAMPLE_DIR / f"{name}.csv", DATA_DIR / f"{name}.csv")
+else:
+    for name, df in results.items():
+        df.to_csv(DATA_DIR / f"{name}.csv", index=False)
+    print(f"Saved {SEASON} data from the NBA API to data/raw/.")
