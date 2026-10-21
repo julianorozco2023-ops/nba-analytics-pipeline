@@ -1,0 +1,5 @@
+host: "{{ env_var('PGHOST', 'localhost') }}"
+port: "{{ env_var('PGPORT', '5432') | as_number }}"
+user: "{{ env_var('PGUSER', 'postgres') }}"
+pass: "{{ env_var('PGPASSWORD', '') }}"
+dbname: "{{ env_var('PGDATABASE', 'nba_pipeline') }}"
