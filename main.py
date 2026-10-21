@@ -2,16 +2,19 @@ from nba_api.stats.endpoints import leagueleaders, leaguestandingsv3, teamgamelo
 from nba_api.stats.static import teams
 import pandas as pd
 import time
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parent() / "data" / "raw"
 
 all_teams = teams.get_teams()
 
 leaders = leagueleaders.LeagueLeaders(
-    season="2024-25",
+    season="2023-24",
     stat_category_abbreviation="PTS",
     per_mode48="PerGame"
 )
 df = leaders.get_data_frames()[0]
-df.to_csv("/Users/julianorozco/PycharmProjects/NBA/data/raw/player_stats.csv", index=False)
+df.to_csv(DATA_DIR / "player_stats.csv", index=False)
 
 time.sleep(0.6)
 
